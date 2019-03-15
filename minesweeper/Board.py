@@ -1,35 +1,35 @@
 from tkinter import *
-from Tile import Tile
+from NumTile import NumTile
+from Bomb import Bomb
 from random import uniform
-import pprint
 
 class Board(object):
+    
     def __init__(self, root, rows, cols):
         self.rows = rows
         self.cols = cols
+        self.isGameOver = False
+        self.tiles = dict()
 
+        winSize = rows * 26
+        
         root.title("Minesweeper Demo")
-        root.geometry("400x400")
-        #root.resizable(0,0)
+        root.geometry(f"{winSize}x{winSize}")
+        root.resizable(0,0)
         self.root = root
         self.root.grid()
-
-        self.frame = Frame(root, height = 400, width = 400)
-        self.frame.grid()
-
-        self.tiles = dict()
+        self.frame = Frame(root)
+        self.frame.grid(sticky = N + S + W + E)
         
-        self.isGameOver = False
-    
         self.setup(self.frame)
 
-    def setup(self, frame):
-        tileSize = frame.winfo_height() // self.rows
-    
+    def setup(self, frame):      
         for y in range(self.rows):
             for x in range(self.cols):
-                tile = Tile(frame, y, x, tileSize, uniform(0,1) < 0.20)
-                self.tiles[(x,y)] = tile
+                if uniform(0, 1) < .2:
+                    self.tiles[(x, y)] = Bomb(frame, y, x)
+                else:
+                    self.tiles[(x, y)] = NumTile(frame, y, x)
                 
         for k, v in self.tiles.items():
             neighbors = set()
@@ -42,12 +42,18 @@ class Board(object):
                             neighbors.add(self.tiles[nX, nY])
                         except:
                             continue
-                           
+
             v.setNeighbors(neighbors)
-        
+            
+            if not v.isBomb:
+                for neighbor in v.neighbors:
+                    if neighbor.isBomb:
+                        v.bombs += 1
+                v.update()
+      
 def main():
     root = Tk()
-    game = Board(root, 10, 10)
+    game = Board(root, 16, 16)
     root.mainloop()
 
 if __name__ == "__main__":
