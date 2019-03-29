@@ -1,23 +1,27 @@
+# This represents a non-bomb Tile in Minesweeper
+# Version: 1.0
+# Author: jwill319
+
 from Tile import Tile
 class NumTile(Tile):
-    #colors = ["#ff0000", "#ff7f00", "#ffff00", "#00ff00", "#00ffff", "#0000ff", "#7f00ff", "#000000"]
-    
+
+    # Constructor for NumTile    
     def __init__(self, gridFrame, row, col):
         super(NumTile, self).__init__(gridFrame, row, col, False)
         self.bombs = 0
-        
-    def update(self):
-        self.button.configure(text = str(self.bombs), font = ('Times', '10', 'bold'), state = "disabled")
 
+    # Event handling for left click
+    def onLeftClick(self, event):
+        self.reveal()
+
+    # Reveals the current NumTile
     def reveal(self):
         if not self.isRevealed:
             self.button.configure(text = str(self.bombs), font = ('Times', '10', 'bold'), state = "disabled")
             self.isRevealed = True
             self.revealNeighbors()
-    
-    def onLeftClick(self, event):
-        self.reveal()
-              
+
+    # Reveals neighboring NumTiles if there are no surrounding bombs      
     def revealNeighbors(self):
         if (self.bombs != 0):
             return
