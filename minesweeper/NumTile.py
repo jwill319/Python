@@ -7,7 +7,22 @@ class NumTile(Tile):
         self.bombs = 0
         
     def update(self):
-        self.button.configure(text = str(self.bombs), font = ('Times', '10'))
+        self.button.configure(text = str(self.bombs), font = ('Times', '10', 'bold'), state = "disabled")
 
+    def reveal(self):
+        if not self.isRevealed:
+            self.button.configure(text = str(self.bombs), font = ('Times', '10', 'bold'), state = "disabled")
+            self.isRevealed = True
+            self.revealNeighbors()
+    
     def onLeftClick(self, event):
-        print("HellO!")
+        self.reveal()
+              
+    def revealNeighbors(self):
+        if (self.bombs != 0):
+            return
+        
+        for tile in self.neighbors:
+            if not tile.isBomb:
+                tile.reveal()
+                
